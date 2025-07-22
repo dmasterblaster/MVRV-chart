@@ -4,10 +4,38 @@
   <meta charset="utf-8">
   <title>MVRV Z-Score Chart</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body style="margin:0;padding:0;">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: white;
+    }
 
-  <div id="chart" style="width:100vw;height:100vh;"></div>
+    #chart {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    #watermark {
+      position: absolute;
+      bottom: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.07;
+      z-index: 0;
+      width: 200px;
+    }
+
+    .js-plotly-plot {
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="chart">
+    <img id="watermark" src="b-black-200x200.png" alt="Watermark">
+  </div>
 
   <script>
     const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQSIuDbdKQG358WGpP-wJnNGaxfcWzvro7rmv32_rC1wUX7dYSnJaHUYZrwi5eVr00nXuEA9J7z98YF/pub?output=csv";
@@ -16,7 +44,7 @@
       .then(response => response.text())
       .then(csv => {
         const rows = csv.trim().split("\n");
-        rows.shift(); // Remove header
+        rows.shift();
 
         const dates = [];
         const values = [];
@@ -31,17 +59,10 @@
           x: dates,
           y: values,
           type: 'scatter',
-          mode: 'lines',  // LINE ONLY
-          line: { shape: 'spline', width: 2 }
+          mode: 'lines',
+          line: { shape: 'spline', color: '#1f77b4', width: 2 },
+          hoverinfo: 'x+y'
         };
 
-        Plotly.newPlot('chart', [trace], {
-          margin: { t: 30, l: 60, r: 30, b: 50 },
-          xaxis: { title: 'Date' },
-          yaxis: { title: 'MVRV Z score' },
-          showlegend: false
-        }, {responsive: true});
-      });
-  </script>
-</body>
-</html>
+        const layout = {
+          margin: { t
