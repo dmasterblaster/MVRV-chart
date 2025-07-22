@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Live Bitcoin Chart</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h2>Live Bitcoin Chart</h2>
+  <div id="chart" style="width: 100%; height: 600px;"></div>
+
+  <script>
+    const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQSIuDbdKQG358WGpP-wJnNGaxfcWzvro7rmv32_rC1wUX7dYSnJaHUYZrwi5eVr00nXuEA9J7z98YF/pub?output=csv";
+
+    fetch(sheetURL)
+      .then(response => response.text())
+      .then(csv => {
+        const rows = csv.trim().split("\n");
+        const header = rows.shift();
+
+        const dates = [];
+        const values = [];
+
+        rows.forEach(row => {
+          const [date, value] = row.split(",");
+          dates.push(date);
+          values.push(parseFloat(value));
+        });
+
+        const trace = {
+          x: dates,
+          y: values,
+          type: 'scatter',
+          mode: 'lines+markers',
+          line: { shape: 'spline' }
+        };
+
+        Plotly.newPlot('chart', [trace], {
+          title: 'Time Series Data from Google Sheets',
+          xaxis: { title: 'Date' },
+          yaxis: { title: 'Value' }
+        });
+      });
+  </script>
+</body>
+</html>
